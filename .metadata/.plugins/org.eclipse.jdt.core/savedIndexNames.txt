@@ -1,0 +1,8 @@
+INDEX VERSION 1.131+C:\Users\0019GE744\Desktop\mono2micro\.metadata\.plugins\org.eclipse.jdt.core
+1865797976.index
+2004713413.index
+2177260913.index
+3462043018.index
+3796731771.index
+436327374.index
+2579876473.index
