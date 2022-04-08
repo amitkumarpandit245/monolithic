@@ -9,6 +9,7 @@
 		<welcome-file>TeacherControllerServlet</welcome-file>
 		<welcome-file>StudentControllerServlet</welcome-file>
 		<welcome-file>index.jsp</welcome-file>
+		<welcome-file>CourseControllerServlet</welcome-file>
 
 	</welcome-file-list>
 </web-app>
