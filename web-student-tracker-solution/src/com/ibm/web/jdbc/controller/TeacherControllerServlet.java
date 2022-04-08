@@ -1,4 +1,4 @@
-package com.luv2code.web.jdbc;
+package com.ibm.web.jdbc.controller;
 
 import java.io.IOException;
 import java.util.List;
@@ -12,14 +12,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
 
+import com.ibm.web.jdbc.TeacherDbUtil;
+import com.ibm.web.jdbc.model.Teacher;
+
 /**
  * Servlet implementation class StudentControllerServlet
  */
-@WebServlet("/StudentControllerServlet")
-public class StudentControllerServlet extends HttpServlet {
+@WebServlet("/TeacherControllerServlet")
+public class TeacherControllerServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
-	private StudentDbUtil studentDbUtil;
+	private TeacherDbUtil teacherDbUtil;
 	
 	@Resource(name="jdbc/web_student_tracker")
 	private DataSource dataSource;
@@ -30,7 +33,7 @@ public class StudentControllerServlet extends HttpServlet {
 		
 		// create our student db util ... and pass in the conn pool / datasource
 		try {
-			studentDbUtil = new StudentDbUtil(dataSource);
+			teacherDbUtil = new TeacherDbUtil(dataSource);
 		}
 		catch (Exception exc) {
 			throw new ServletException(exc);
@@ -52,27 +55,27 @@ public class StudentControllerServlet extends HttpServlet {
 			switch (theCommand) {
 			
 			case "LIST":
-				listStudents(request, response);
+				listTeachers(request, response);
 				break;
 				
 			case "ADD":
-				addStudent(request, response);
+				addTeacher(request, response);
 				break;
 				
 			case "LOAD":
-				loadStudent(request, response);
+				loadTeacher(request, response);
 				break;
 				
 			case "UPDATE":
-				updateStudent(request, response);
+				updateTeacher(request, response);
 				break;
 			
 			case "DELETE":
-				deleteStudent(request, response);
+				deleteTeacher(request, response);
 				break;
 				
 			default:
-				listStudents(request, response);
+				listTeachers(request, response);
 			}
 				
 		}
@@ -82,58 +85,58 @@ public class StudentControllerServlet extends HttpServlet {
 		
 	}
 
-	private void deleteStudent(HttpServletRequest request, HttpServletResponse response)
+	private void deleteTeacher(HttpServletRequest request, HttpServletResponse response)
 		throws Exception {
 
 		// read student id from form data
-		String theStudentId = request.getParameter("studentId");
+		String theTeacherId = request.getParameter("teacherId");
 		
 		// delete student from database
-		studentDbUtil.deleteStudent(theStudentId);
+		teacherDbUtil.deleteTeacher(theTeacherId);
 		
 		// send them back to "list students" page
-		listStudents(request, response);
+		listTeachers(request, response);
 	}
 
-	private void updateStudent(HttpServletRequest request, HttpServletResponse response)
+	private void updateTeacher(HttpServletRequest request, HttpServletResponse response)
 		throws Exception {
 
 		// read student info from form data
-		int id = Integer.parseInt(request.getParameter("studentId"));
+		int id = Integer.parseInt(request.getParameter("teacherId"));
 		String firstName = request.getParameter("firstName");
 		String lastName = request.getParameter("lastName");
 		String email = request.getParameter("email");
 		
 		// create a new student object
-		Student theStudent = new Student(id, firstName, lastName, email);
+		Teacher theTeacher = new Teacher(id, firstName, lastName, email);
 		
 		// perform update on database
-		studentDbUtil.updateStudent(theStudent);
+		teacherDbUtil.updateTeacher(theTeacher);
 		
 		// send them back to the "list students" page
-		listStudents(request, response);
+		listTeachers(request, response);
 		
 	}
 
-	private void loadStudent(HttpServletRequest request, HttpServletResponse response) 
+	private void loadTeacher(HttpServletRequest request, HttpServletResponse response) 
 		throws Exception {
 
 		// read student id from form data
-		String theStudentId = request.getParameter("studentId");
+		String theTeacherId = request.getParameter("teacherId");
 		
 		// get student from database (db util)
-		Student theStudent = studentDbUtil.getStudent(theStudentId);
+		Teacher theTeacher = teacherDbUtil.getTeacher(theTeacherId);
 		
 		// place student in the request attribute
-		request.setAttribute("THE_STUDENT", theStudent);
+		request.setAttribute("THE_TEACHER", theTeacher);
 		
 		// send to jsp page: update-student-form.jsp
 		RequestDispatcher dispatcher = 
-				request.getRequestDispatcher("/update-student-form.jsp");
+				request.getRequestDispatcher("/update-teacher-form.jsp");
 		dispatcher.forward(request, response);		
 	}
 
-	private void addStudent(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	private void addTeacher(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
 		// read student info from form data
 		String firstName = request.getParameter("firstName");
@@ -141,40 +144,27 @@ public class StudentControllerServlet extends HttpServlet {
 		String email = request.getParameter("email");		
 		
 		// create a new student object
-		Student theStudent = new Student(firstName, lastName, email);
+		Teacher theTeacher = new Teacher(firstName, lastName, email);
 		
 		// add the student to the database
-		studentDbUtil.addStudent(theStudent);
+		teacherDbUtil.addTeacher(theTeacher);
 				
 		// send back to main page (the student list)
-		listStudents(request, response);
+		listTeachers(request, response);
 	}
 
-	private void listStudents(HttpServletRequest request, HttpServletResponse response) 
+	private void listTeachers(HttpServletRequest request, HttpServletResponse response) 
 		throws Exception {
 
 		// get students from db util
-		List<Student> students = studentDbUtil.getStudents();
+		List<Teacher> teachers = teacherDbUtil.getTeacher();
 		
 		// add students to the request
-		request.setAttribute("STUDENT_LIST", students);
+		request.setAttribute("TEACHER_LIST", teachers);
 				
 		// send to JSP page (view)
-		RequestDispatcher dispatcher = request.getRequestDispatcher("/list-students.jsp");
+		RequestDispatcher dispatcher = request.getRequestDispatcher("/list-teachers.jsp");
 		dispatcher.forward(request, response);
 	}
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-

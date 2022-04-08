@@ -1,4 +1,4 @@
-package com.luv2code.web.jdbc;
+package com.ibm.web.jdbc.model;
 
 public class Course {
 

@@ -1,4 +1,4 @@
-package com.luv2code.web.jdbc;
+package com.ibm.web.jdbc;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.sql.DataSource;
+
+import com.ibm.web.jdbc.model.Course;
 
 public class CourseDbUtil {
 

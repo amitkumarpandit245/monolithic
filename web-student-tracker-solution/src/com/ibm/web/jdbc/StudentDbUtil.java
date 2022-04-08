@@ -1,4 +1,4 @@
-package com.luv2code.web.jdbc;
+package com.ibm.web.jdbc;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -9,17 +9,19 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
-public class TeacherDbUtil {
+import com.ibm.web.jdbc.model.Student;
+
+public class StudentDbUtil {
 
 	private DataSource dataSource;
 
-	public TeacherDbUtil(DataSource theDataSource) {
+	public StudentDbUtil(DataSource theDataSource) {
 		dataSource = theDataSource;
 	}
 	
-	public List<Teacher> getTeacher() throws Exception {
+	public List<Student> getStudents() throws Exception {
 		
-		List<Teacher> teachers = new ArrayList<>();
+		List<Student> students = new ArrayList<>();
 		
 		Connection myConn = null;
 		Statement myStmt = null;
@@ -30,7 +32,7 @@ public class TeacherDbUtil {
 			myConn = dataSource.getConnection();
 			
 			// create sql statement
-			String sql = "select * from teacher order by last_name";
+			String sql = "select * from student order by last_name";
 			
 			myStmt = myConn.createStatement();
 			
@@ -47,13 +49,13 @@ public class TeacherDbUtil {
 				String email = myRs.getString("email");
 				
 				// create new student object
-				Teacher tempTeacher = new Teacher(id, firstName, lastName, email);
+				Student tempStudent = new Student(id, firstName, lastName, email);
 				
 				// add it to the list of students
-				teachers.add(tempTeacher);				
+				students.add(tempStudent);				
 			}
 			
-			return teachers;		
+			return students;		
 		}
 		finally {
 			// close JDBC objects
@@ -81,7 +83,7 @@ public class TeacherDbUtil {
 		}
 	}
 
-	public void addTeacher(Teacher theTeacher) throws Exception {
+	public void addStudent(Student theStudent) throws Exception {
 
 		Connection myConn = null;
 		PreparedStatement myStmt = null;
@@ -91,16 +93,16 @@ public class TeacherDbUtil {
 			myConn = dataSource.getConnection();
 			
 			// create sql for insert
-			String sql = "insert into teacher "
+			String sql = "insert into student "
 					   + "(first_name, last_name, email) "
 					   + "values (?, ?, ?)";
 			
 			myStmt = myConn.prepareStatement(sql);
 			
 			// set the param values for the student
-			myStmt.setString(1, theTeacher.getFirstName());
-			myStmt.setString(2, theTeacher.getLastName());
-			myStmt.setString(3, theTeacher.getEmail());
+			myStmt.setString(1, theStudent.getFirstName());
+			myStmt.setString(2, theStudent.getLastName());
+			myStmt.setString(3, theStudent.getEmail());
 			
 			// execute sql insert
 			myStmt.execute();
@@ -111,30 +113,30 @@ public class TeacherDbUtil {
 		}
 	}
 
-	public Teacher getTeacher(String theTeacherId) throws Exception {
+	public Student getStudent(String theStudentId) throws Exception {
 
-		Teacher theTeacher = null;
+		Student theStudent = null;
 		
 		Connection myConn = null;
 		PreparedStatement myStmt = null;
 		ResultSet myRs = null;
-		int teacherId;
+		int studentId;
 		
 		try {
 			// convert student id to int
-			teacherId = Integer.parseInt(theTeacherId);
+			studentId = Integer.parseInt(theStudentId);
 			
 			// get connection to database
 			myConn = dataSource.getConnection();
 			
 			// create sql to get selected student
-			String sql = "select * from teacher where id=?";
+			String sql = "select * from student where id=?";
 			
 			// create prepared statement
 			myStmt = myConn.prepareStatement(sql);
 			
 			// set params
-			myStmt.setInt(1, teacherId);
+			myStmt.setInt(1, studentId);
 			
 			// execute statement
 			myRs = myStmt.executeQuery();
@@ -146,13 +148,13 @@ public class TeacherDbUtil {
 				String email = myRs.getString("email");
 				
 				// use the studentId during construction
-				theTeacher = new Teacher(teacherId, firstName, lastName, email);
+				theStudent = new Student(studentId, firstName, lastName, email);
 			}
 			else {
-				throw new Exception("Could not find Teacher id: " + teacherId);
+				throw new Exception("Could not find student id: " + studentId);
 			}				
 			
-			return theTeacher;
+			return theStudent;
 		}
 		finally {
 			// clean up JDBC objects
@@ -160,7 +162,7 @@ public class TeacherDbUtil {
 		}
 	}
 
-	public void updateTeacher(Teacher theTeacher) throws Exception {
+	public void updateStudent(Student theStudent) throws Exception {
 		
 		Connection myConn = null;
 		PreparedStatement myStmt = null;
@@ -170,7 +172,7 @@ public class TeacherDbUtil {
 			myConn = dataSource.getConnection();
 			
 			// create SQL update statement
-			String sql = "update teacher "
+			String sql = "update student "
 						+ "set first_name=?, last_name=?, email=? "
 						+ "where id=?";
 			
@@ -178,10 +180,10 @@ public class TeacherDbUtil {
 			myStmt = myConn.prepareStatement(sql);
 			
 			// set params
-			myStmt.setString(1, theTeacher.getFirstName());
-			myStmt.setString(2, theTeacher.getLastName());
-			myStmt.setString(3, theTeacher.getEmail());
-			myStmt.setInt(4, theTeacher.getId());
+			myStmt.setString(1, theStudent.getFirstName());
+			myStmt.setString(2, theStudent.getLastName());
+			myStmt.setString(3, theStudent.getEmail());
+			myStmt.setInt(4, theStudent.getId());
 			
 			// execute SQL statement
 			myStmt.execute();
@@ -192,26 +194,26 @@ public class TeacherDbUtil {
 		}
 	}
 
-	public void deleteTeacher(String theTeacherId) throws Exception {
+	public void deleteStudent(String theStudentId) throws Exception {
 
 		Connection myConn = null;
 		PreparedStatement myStmt = null;
 		
 		try {
 			// convert student id to int
-			int teacherId = Integer.parseInt(theTeacherId);
+			int studentId = Integer.parseInt(theStudentId);
 			
 			// get connection to database
 			myConn = dataSource.getConnection();
 			
 			// create sql to delete student
-			String sql = "delete from teacher where id=?";
+			String sql = "delete from student where id=?";
 			
 			// prepare statement
 			myStmt = myConn.prepareStatement(sql);
 			
 			// set params
-			myStmt.setInt(1, teacherId);
+			myStmt.setInt(1, studentId);
 			
 			// execute sql statement
 			myStmt.execute();

@@ -1,4 +1,4 @@
-package com.luv2code.web.jdbc;
+package com.ibm.web.jdbc.controller;
 
 import java.io.IOException;
 import java.util.List;
@@ -12,14 +12,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
 
+import com.ibm.web.jdbc.SyllabusDbUtil;
+import com.ibm.web.jdbc.model.Syllabus;
+
 /**
  * Servlet implementation class StudentControllerServlet
  */
-@WebServlet("/CourseControllerServlet")
-public class CourseControllerServlet extends HttpServlet {
+@WebServlet("/SyllabusControllerServlet")
+public class SyllabusControllerServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
-	private CourseDbUtil courseDbUtil;
+	private SyllabusDbUtil syllabusDbUtil;
 	
 	@Resource(name="jdbc/web_student_tracker")
 	private DataSource dataSource;
@@ -30,11 +33,12 @@ public class CourseControllerServlet extends HttpServlet {
 		
 		// create our student db util ... and pass in the conn pool / datasource
 		try {
-			courseDbUtil = new CourseDbUtil(dataSource);
+			syllabusDbUtil = new SyllabusDbUtil(dataSource);
 		}
 		catch (Exception exc) {
 			throw new ServletException(exc);
 		}
+		
 	}
 	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -52,27 +56,27 @@ public class CourseControllerServlet extends HttpServlet {
 			switch (theCommand) {
 			
 			case "LIST":
-				listCourses(request, response);
+				listSyllabus(request, response);
 				break;
 				
 			case "ADD":
-				addCourse(request, response);
+				addSyllabus(request, response);
 				break;
 				
 			case "LOAD":
-				loadCourses(request, response);
+				loadSyllabus(request, response);
 				break;
 				
 			case "UPDATE":
-				updateCourse(request, response);
+				updateSyllabus(request, response);
 				break;
 			
 			case "DELETE":
-				deleteCourse(request, response);
+				deleteSyllabus(request, response);
 				break;
 				
 			default:
-				listCourses(request, response);
+				listSyllabus(request, response);
 			}
 				
 		}
@@ -82,83 +86,83 @@ public class CourseControllerServlet extends HttpServlet {
 		
 	}
 
-	private void deleteCourse(HttpServletRequest request, HttpServletResponse response)
+	private void deleteSyllabus(HttpServletRequest request, HttpServletResponse response)
 		throws Exception {
 
 		// read student id from form data
-		String theCourseId = request.getParameter("courseId");
+		String theSyllabusId = request.getParameter("syllabusId");
 		
 		// delete student from database
-		courseDbUtil.deleteCourse(theCourseId);
+		syllabusDbUtil.deleteSyllabus(theSyllabusId);
 		
 		// send them back to "list students" page
-		listCourses(request, response);
+		listSyllabus(request, response);
 	}
 
-	private void updateCourse(HttpServletRequest request, HttpServletResponse response)
+	private void updateSyllabus(HttpServletRequest request, HttpServletResponse response)
 		throws Exception {
 
 		// read student info from form data
-		int id = Integer.parseInt(request.getParameter("courseId"));
-		String courseName = request.getParameter("courseName");
-		String courseDesc = request.getParameter("courseDesc");
+		int id = Integer.parseInt(request.getParameter("syllabusId"));
+		String syllabusName = request.getParameter("syllabusName");
+		String syllabusDesc = request.getParameter("syllabusDesc");
 		
 		// create a new student object
-		Course theCourse = new Course(id, courseName, courseDesc);
+		Syllabus theSyllabus = new Syllabus(id, syllabusName, syllabusDesc);
 		
 		// perform update on database
-		courseDbUtil.updateCourse(theCourse);
+		syllabusDbUtil.updateSyllabus(theSyllabus);
 		
 		// send them back to the "list students" page
-		listCourses(request, response);
+		listSyllabus(request, response);
 		
 	}
 
-	private void loadCourses(HttpServletRequest request, HttpServletResponse response) 
+	private void loadSyllabus(HttpServletRequest request, HttpServletResponse response) 
 		throws Exception {
 
 		// read student id from form data
-		String theCourseId = request.getParameter("courseId");
+		String theSyllabusId = request.getParameter("syllabusId");
 		
 		// get student from database (db util)
-		Course theCourse = courseDbUtil.getCourse(theCourseId);
+		Syllabus theSyllabus = syllabusDbUtil.getSyllabus(theSyllabusId);
 		
 		// place student in the request attribute
-		request.setAttribute("THE_COURSE", theCourse);
+		request.setAttribute("THE_SYLLABUS", theSyllabus);
 		
 		// send to jsp page: update-student-form.jsp
 		RequestDispatcher dispatcher = 
-				request.getRequestDispatcher("/update-course-form.jsp");
+				request.getRequestDispatcher("/update-syllabus-form.jsp");
 		dispatcher.forward(request, response);		
 	}
 
-	private void addCourse(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	private void addSyllabus(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
 		// read student info from form data
-		String courseName = request.getParameter("courseName");
-		String courseDesc = request.getParameter("courseDesc");		
+		String SyllabusName = request.getParameter("syllabusName");
+		String SyllabusDesc = request.getParameter("syllabusDesc");		
 		
 		// create a new student object
-		Course theCourse = new Course(courseName,  courseDesc);
+		Syllabus theSyllabus = new Syllabus(SyllabusName,  SyllabusDesc);
 		
 		// add the student to the database
-		courseDbUtil.addCourse(theCourse);
+		syllabusDbUtil.addSyllabus(theSyllabus);
 				
 		// send back to main page (the student list)
-		listCourses(request, response);
+		listSyllabus(request, response);
 	}
 
-	private void listCourses(HttpServletRequest request, HttpServletResponse response) 
+	private void listSyllabus(HttpServletRequest request, HttpServletResponse response) 
 		throws Exception {
 
 		// get students from db util
-		List<Course> courses = courseDbUtil.getCourse();
+		List<Syllabus> syllabus = syllabusDbUtil.getSyllabus();
 		
 		// add students to the request
-		request.setAttribute("COURSE_LIST", courses);
+		request.setAttribute("SYLLABUS_LIST", syllabus);
 				
 		// send to JSP page (view)
-		RequestDispatcher dispatcher = request.getRequestDispatcher("/list-courses.jsp");
+		RequestDispatcher dispatcher = request.getRequestDispatcher("/list-syllabus.jsp");
 		dispatcher.forward(request, response);
 	}
 

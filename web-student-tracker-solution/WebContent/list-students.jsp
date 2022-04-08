@@ -14,7 +14,7 @@
 	<div id="wrapper">
 		<div id="header">
 			<h2 align="center">Students List</h2>
-			<a href="/web-student-tracker-solution/">Home</a>
+			<a href="/university-tracker-solution/">Home</a>
 		</div>
 	</div>
 

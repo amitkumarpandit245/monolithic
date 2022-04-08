@@ -1,4 +1,4 @@
-package com.luv2code.web.jdbc;
+package com.ibm.web.jdbc;
 
 import java.io.IOException;
 import java.io.PrintWriter;
